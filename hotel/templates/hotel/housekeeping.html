@@ -1,0 +1,91 @@
+{% extends "hotel/base.html" %}
+
+{% block title %}Housekeeping – Azure Haven Hotel{% endblock %}
+
+{% block topnav %}
+<header class="topnav">
+  <div class="topnav-title-wrap">
+    <h1 class="topnav-title">Housekeeping</h1>
+    <div class="topnav-breadcrumb">
+      <a href="{% url 'dashboard' %}">Dashboard</a>
+      <span class="topnav-breadcrumb-sep">/</span>
+      <span style="color:var(--accent-hover);">Housekeeping</span>
+    </div>
+  </div>
+  <div class="topnav-user">
+    <div class="topnav-user-info">
+      <div class="topnav-user-name">Gajal Chandrakar</div>
+      <div class="topnav-user-role">General Manager</div>
+    </div>
+    <img class="topnav-avatar" src="https://ui-avatars.com/api/?name=Gajal+Chandrakar&background=a8c740&color=fff" alt="Admin" />
+  </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2 class="page-heading">Room Status Board</h2>
+    <p class="page-subheading">Track housekeeping status for all rooms.</p>
+  </div>
+  <div style="display:flex;gap:16px;">
+    <div class="rooms-pill"><span class="dot" style="background:#16a34a;"></span> Clean</div>
+    <div class="rooms-pill"><span class="dot" style="background:#dc2626;"></span> Needs Cleaning</div>
+    <div class="rooms-pill"><span class="dot" style="background:#d97706;"></span> Inspecting</div>
+    <div class="rooms-pill"><span class="dot" style="background:#2563eb;"></span> Maintenance</div>
+  </div>
+</div>
+
+<!-- Summary stats -->
+<div class="dashboard-stats" style="grid-template-columns:repeat(4,1fr);margin-bottom:24px;">
+  <div class="stat-card">
+    <div class="stat-icon-wrap" style="background:#dcfce7;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div class="stat-label">Clean</div>
+    <div class="stat-value stat-accent">{% for r in rooms %}{% if r.is_available %}{% with count=forloop.counter %}{% endwith %}{% endif %}{% endfor %}{{ rooms|length }}</div>
+    <div class="stat-sub">Ready for guests</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon-wrap" style="background:#fee2e2;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    </div>
+    <div class="stat-label">Needs Cleaning</div>
+    <div class="stat-value">0</div>
+    <div class="stat-sub">Requires attention</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon-wrap" style="background:#fef3c7;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+    </div>
+    <div class="stat-label">Inspecting</div>
+    <div class="stat-value">0</div>
+    <div class="stat-sub">Under review</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon-wrap" style="background:#dbeafe;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+    </div>
+    <div class="stat-label">Maintenance</div>
+    <div class="stat-value">0</div>
+    <div class="stat-sub">Under repair</div>
+  </div>
+</div>
+
+<div class="housekeeping-grid">
+  {% for room in rooms %}
+  <div class="hk-room-card">
+    <div class="hk-room-number">{{ room.room_number }}</div>
+    <div class="hk-room-type">{{ room.room_type }} · {{ room.bed_type }}</div>
+    {% if room.is_available %}
+      <span class="hk-status clean"><span class="dot" style="background:#16a34a;width:6px;height:6px;border-radius:50%;"></span> Clean</span>
+    {% else %}
+      <span class="hk-status dirty"><span class="dot" style="background:#dc2626;width:6px;height:6px;border-radius:50%;"></span> Occupied</span>
+    {% endif %}
+    <div style="margin-top:10px;font-size:.72rem;color:var(--text-muted);">
+      {% if room.is_available %}Ready for check-in{% else %}Guest in room{% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

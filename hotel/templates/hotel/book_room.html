@@ -1,0 +1,133 @@
+{% extends "hotel/base.html" %}
+
+{% block title %}Book Room {{ room.room_number }} – Azure Haven Hotel{% endblock %}
+
+{% block topnav %}
+<header class="topnav">
+  <div class="topnav-title-wrap">
+    <h1 class="topnav-title">Book Room</h1>
+    <div class="topnav-breadcrumb">
+      <a href="{% url 'dashboard' %}">Dashboard</a>
+      <span class="topnav-breadcrumb-sep">/</span>
+      <a href="{% url 'rooms_list' %}">Rooms</a>
+      <span class="topnav-breadcrumb-sep">/</span>
+      <a href="{% url 'room_detail' room.pk %}">Room {{ room.room_number }}</a>
+      <span class="topnav-breadcrumb-sep">/</span>
+      <span style="color:var(--accent-hover);">Book</span>
+    </div>
+  </div>
+  <div class="topnav-user">
+    <div class="topnav-user-info">
+      <div class="topnav-user-name">Gajal Chandrakar</div>
+      <div class="topnav-user-role">General Manager</div>
+    </div>
+    <img class="topnav-avatar" src="https://ui-avatars.com/api/?name=Gajal+Chandrakar&background=a8c740&color=fff" alt="Admin" />
+  </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2 class="page-heading">Create Reservation</h2>
+    <p class="page-subheading">Enter guest and stay information to book Room {{ room.room_number }}.</p>
+  </div>
+</div>
+
+<div class="room-detail-layout" style="align-items: flex-start;">
+  <!-- Left Side: Form -->
+  <div class="room-detail-left">
+    <div class="card" style="padding: 24px;">
+      <h3 style="margin-bottom:20px; font-size:1.2rem; font-weight:600;">Guest Details</h3>
+      <form method="POST" action="{% url 'book_room' room.pk %}" id="booking-form">
+        {% csrf_token %}
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="first_name">First Name <span style="color:red;">*</span></label>
+            <input class="form-input" type="text" name="first_name" id="first_name" required placeholder="John" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="last_name">Last Name <span style="color:red;">*</span></label>
+            <input class="form-input" type="text" name="last_name" id="last_name" required placeholder="Doe" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="email">Email Address <span style="color:red;">*</span></label>
+            <input class="form-input" type="email" name="email" id="email" required placeholder="john.doe@example.com" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="phone">Phone Number <span style="color:red;">*</span></label>
+            <input class="form-input" type="tel" name="phone" id="phone" required placeholder="+91 98765 43210" />
+          </div>
+        </div>
+
+        <h3 style="margin:24px 0 16px 0; font-size:1.2rem; font-weight:600; border-top:1px solid var(--border); padding-top:24px;">Stay Details</h3>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="check_in">Check-In Date <span style="color:red;">*</span></label>
+            <input class="form-input" type="date" name="check_in" id="check_in" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="check_out">Check-Out Date <span style="color:red;">*</span></label>
+            <input class="form-input" type="date" name="check_out" id="check_out" required />
+          </div>
+        </div>
+
+        <div class="form-group" style="max-width: 50%;">
+          <label class="form-label" for="num_guests">Number of Guests</label>
+          <input class="form-input" type="number" name="num_guests" id="num_guests" min="1" max="{{ room.max_guests }}" value="1" />
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; margin-top:24px;">
+          <a href="{% url 'room_detail' room.pk %}" class="btn btn-outline" style="margin-right:12px;">Cancel</a>
+          <button type="submit" class="btn btn-primary" style="padding:10px 24px; font-weight:600;">Confirm Booking</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Right Side: Room Summary -->
+  <div class="room-detail-right">
+    <div class="card" style="padding: 20px;">
+      <h3 style="margin-bottom:16px; font-size:1.1rem; font-weight:600;">Room Summary</h3>
+      {% if room.image %}
+        <img src="{{ room.image.url }}" alt="Room Image" style="width:100%; border-radius:8px; margin-bottom:16px;" />
+      {% else %}
+        <div style="width:100%; height:150px; border-radius:8px; margin-bottom:16px; background-color:var(--bg-elevated); display:flex; align-items:center; justify-content:center; color:var(--text-muted);">
+          No Image
+        </div>
+      {% endif %}
+      
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+        <span style="font-weight:600; font-size:1.15rem;">Room {{ room.room_number }}</span>
+        <span class="room-type-tag {{ room.room_type|lower }}">{{ room.room_type }}</span>
+      </div>
+      
+      <div style="border-top:1px dashed var(--border); border-bottom:1px dashed var(--border); padding:16px 0; margin-bottom:16px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+          <span style="color:var(--text-secondary);">Bed Type</span>
+          <span style="font-weight:500;">{{ room.bed_type }}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+          <span style="color:var(--text-secondary);">Max Guests</span>
+          <span style="font-weight:500;">{{ room.max_guests }} Persons</span>
+        </div>
+        <div style="display:flex; justify-content:space-between;">
+          <span style="color:var(--text-secondary);">Rate / Night</span>
+          <span style="font-weight:600; color:var(--text-main);">₹{{ room.price_per_night|floatformat:0 }}</span>
+        </div>
+      </div>
+      
+      <div style="border-radius:6px; background:rgba(182,207,84,0.1); padding:16px; text-align:center;">
+        <svg style="color:var(--accent); margin-bottom:8px;" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <div style="font-weight:600; font-size:.9rem; color:var(--text-main);">Premium Assurance</div>
+        <div style="font-size:.8rem; color:var(--text-secondary); margin-top:4px;">Includes complimentary breakfast & fast Wi-Fi.</div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

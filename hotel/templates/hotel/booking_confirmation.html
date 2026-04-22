@@ -1,0 +1,95 @@
+{% extends "hotel/base.html" %}
+
+{% block title %}Booking Confirmation – Azure Haven Hotel{% endblock %}
+
+{% block topnav %}
+<header class="topnav">
+  <div class="topnav-title-wrap">
+    <h1 class="topnav-title">Booking Confirmation</h1>
+    <div class="topnav-breadcrumb">
+      <a href="{% url 'dashboard' %}">Dashboard</a>
+      <span class="topnav-breadcrumb-sep">/</span>
+      <a href="{% url 'reservations' %}">Reservations</a>
+      <span class="topnav-breadcrumb-sep">/</span>
+      <span style="color:var(--accent-hover);">Confirmation</span>
+    </div>
+  </div>
+  <div class="topnav-user">
+    <div class="topnav-user-info">
+      <div class="topnav-user-name">Gajal Chandrakar</div>
+      <div class="topnav-user-role">General Manager</div>
+    </div>
+    <img class="topnav-avatar" src="https://ui-avatars.com/api/?name=Gajal+Chandrakar&background=a8c740&color=fff" alt="Admin" />
+  </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="page-header" style="justify-content:center; text-align:center;">
+  <div style="max-width: 600px; margin:0 auto;">
+    <svg style="color:#16a34a; margin:0 auto 16px auto; display:block;" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    <h2 class="page-heading" style="font-size: 2rem;">Booking Confirmed</h2>
+    <p class="page-subheading" style="font-size: 1.1rem;">Your reservation for <strong>{{ booking.guest.full_name }}</strong> has been successfully processed.</p>
+  </div>
+</div>
+
+<div style="max-width: 800px; margin: 32px auto;">
+  <div class="card" style="padding: 32px; border-top: 6px solid var(--accent);">
+    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:24px; margin-bottom:24px;">
+      <div>
+        <div style="font-size: .85rem; text-transform:uppercase; letter-spacing:1px; color:var(--text-secondary); margin-bottom:4px;">Booking ID</div>
+        <div style="font-size: 1.5rem; font-weight:700; color:var(--text-main);">{{ booking.booking_id }}</div>
+      </div>
+      <span class="booking-status-badge confirmed" style="font-size:1rem; padding:6px 16px;"><span class="dot"></span>Confirmed</span>
+    </div>
+
+    <div class="form-row" style="gap: 48px; border-bottom:1px dashed var(--border); padding-bottom:24px; margin-bottom:24px;">
+      <div style="flex:1;">
+        <h4 style="font-size:1.1rem; font-weight:600; margin-bottom:16px;">Guest Information</h4>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">Name</span><span style="font-weight:500;">{{ booking.guest.full_name }}</span></div>
+          <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">Email</span><span style="font-weight:500;">{{ booking.guest.email }}</span></div>
+          <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">Phone</span><span style="font-weight:500;">{{ booking.guest.phone }}</span></div>
+          <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">Guests</span><span style="font-weight:500;">{{ booking.num_adults }} Adults</span></div>
+        </div>
+      </div>
+      <div style="flex:1;">
+        <h4 style="font-size:1.1rem; font-weight:600; margin-bottom:16px;">Stay Details</h4>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">Room Info</span><span style="font-weight:500;">Room {{ booking.room.room_number }} ({{ booking.room.room_type }})</span></div>
+          <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">Check-In</span><span style="font-weight:500;">{{ booking.check_in|date:"M d, Y" }} (14:00)</span></div>
+          <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">Check-Out</span><span style="font-weight:500;">{{ booking.check_out|date:"M d, Y" }} (11:00)</span></div>
+          <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">Duration</span><span style="font-weight:500;">{{ booking.num_nights }} Night{% if booking.num_nights > 1 %}s{% endif %}</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h4 style="font-size:1.1rem; font-weight:600; margin-bottom:16px;">Billing Summary</h4>
+      <div style="background:var(--bg-elevated); padding:20px; border-radius:8px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+          <span style="color:var(--text-secondary);">Room Rate ({{ booking.num_nights }} nights)</span>
+          <span style="font-weight:500;">₹{{ booking.room_total|floatformat:0 }}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+          <span style="color:var(--text-secondary);">VAT ({{ booking.vat_percent }}%)</span>
+          <span style="font-weight:500;">₹{{ booking.vat_amount|floatformat:0 }}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+          <span style="color:var(--text-secondary);">City Tax</span>
+          <span style="font-weight:500;">₹{{ booking.city_tax|floatformat:0 }}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-top:20px; padding-top:16px; border-top:1px solid var(--border); font-size:1.2rem; font-weight:700;">
+          <span>Total Amount</span>
+          <span style="color:var(--accent-hover);">₹{{ booking.total_price|floatformat:0 }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 32px; text-align:center;">
+      <a href="{% url 'dashboard' %}" class="btn btn-outline" style="margin-right:12px;">Return to Dashboard</a>
+      <a href="{% url 'reservations' %}" class="btn btn-primary" style="padding:10px 24px;">View All Reservations</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

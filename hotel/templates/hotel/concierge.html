@@ -1,0 +1,109 @@
+{% extends "hotel/base.html" %}
+
+{% block title %}Concierge – Azure Haven Hotel{% endblock %}
+
+{% block topnav %}
+<header class="topnav">
+  <div class="topnav-title-wrap">
+    <h1 class="topnav-title">Concierge</h1>
+    <div class="topnav-breadcrumb">
+      <a href="{% url 'dashboard' %}">Dashboard</a>
+      <span class="topnav-breadcrumb-sep">/</span>
+      <span style="color:var(--accent-hover);">Concierge</span>
+    </div>
+  </div>
+  <div class="topnav-user">
+    <div class="topnav-user-info">
+      <div class="topnav-user-name">Gajal Chandrakar</div>
+      <div class="topnav-user-role">General Manager</div>
+    </div>
+    <img class="topnav-avatar" src="https://ui-avatars.com/api/?name=Gajal+Chandrakar&background=a8c740&color=fff" alt="Admin" />
+  </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2 class="page-heading">Service Requests</h2>
+    <p class="page-subheading">Manage guest service requests and concierge tasks.</p>
+  </div>
+</div>
+
+<!-- Summary Stats -->
+<div class="dashboard-stats" style="grid-template-columns:repeat(4,1fr);margin-bottom:24px;">
+  <div class="stat-card">
+    <div class="stat-icon-wrap" style="background:#eef4d8;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8fac2e" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+    </div>
+    <div class="stat-label">Active Requests</div>
+    <div class="stat-value">{{ bookings|length }}</div>
+    <div class="stat-sub">Currently pending</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon-wrap" style="background:#fee2e2;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    </div>
+    <div class="stat-label">High Priority</div>
+    <div class="stat-value">2</div>
+    <div class="stat-sub">Needs immediate action</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon-wrap" style="background:#dcfce7;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div class="stat-label">Completed Today</div>
+    <div class="stat-value stat-accent">7</div>
+    <div class="stat-sub">Resolved requests</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon-wrap" style="background:#fef3c7;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+    </div>
+    <div class="stat-label">Avg. Response</div>
+    <div class="stat-value">12m</div>
+    <div class="stat-sub">Response time</div>
+  </div>
+</div>
+
+<div class="concierge-grid">
+  {% for booking in bookings %}
+  <div class="concierge-card">
+    <div class="concierge-card-header">
+      <img class="concierge-avatar" src="https://ui-avatars.com/api/?name={{ booking.guest.first_name }}+{{ booking.guest.last_name }}&background=c8d89a&color=5a7a00&size=40" alt="{{ booking.guest.full_name }}" />
+      <div>
+        <div class="concierge-guest-name">{{ booking.guest.full_name }}</div>
+        <div class="concierge-room">Room {% if booking.room %}{{ booking.room.room_number }} · {{ booking.room.room_type }}{% else %}—{% endif %}</div>
+      </div>
+    </div>
+    <div class="concierge-request-label">Request</div>
+    <div class="concierge-request-text">
+      {% if booking.special_requests %}
+        {{ booking.special_requests }}
+      {% else %}
+        No special requests noted.
+      {% endif %}
+    </div>
+    <div class="concierge-meta">
+      {% if booking.transportation %}
+      <div style="font-size:.75rem;color:var(--text-secondary);">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        {{ booking.transportation }}
+      </div>
+      {% endif %}
+      <span class="priority-badge {% if forloop.counter <= 2 %}high{% elif forloop.counter <= 4 %}medium{% else %}low{% endif %}">
+        {% if forloop.counter <= 2 %}🔴 High{% elif forloop.counter <= 4 %}🟡 Medium{% else %}🟢 Low{% endif %}
+      </span>
+    </div>
+  </div>
+  {% empty %}
+  <div class="empty-state" style="grid-column:1/-1;">
+    <div class="empty-state-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+    </div>
+    <div class="empty-state-title">No Active Requests</div>
+    <div class="empty-state-desc">All service requests have been handled. Great job!</div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

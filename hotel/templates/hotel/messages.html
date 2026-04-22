@@ -1,0 +1,125 @@
+{% extends "hotel/base.html" %}
+
+{% block title %}Messages – Azure Haven Hotel{% endblock %}
+
+{% block topnav %}
+<header class="topnav">
+  <div class="topnav-title-wrap">
+    <h1 class="topnav-title">Messages</h1>
+    <div class="topnav-breadcrumb">
+      <a href="{% url 'dashboard' %}">Dashboard</a>
+      <span class="topnav-breadcrumb-sep">/</span>
+      <span style="color:var(--accent-hover);">Messages</span>
+    </div>
+  </div>
+  <div class="topnav-user">
+    <div class="topnav-user-info">
+      <div class="topnav-user-name">Gajal Chandrakar</div>
+      <div class="topnav-user-role">General Manager</div>
+    </div>
+    <img class="topnav-avatar" src="https://ui-avatars.com/api/?name=Gajal+Chandrakar&background=a8c740&color=fff" alt="Admin" />
+  </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2 class="page-heading">Guest Messages</h2>
+    <p class="page-subheading">Communicate with guests and manage service requests.</p>
+  </div>
+</div>
+
+<div class="messages-layout">
+  <!-- Sidebar thread list -->
+  <div class="messages-sidebar">
+    <div class="messages-sidebar-header">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        Inbox
+        <span class="nav-badge">4</span>
+      </div>
+    </div>
+    {% for guest in guests %}
+    <div class="message-thread {% if forloop.first %}active{% endif %}" onclick="selectThread(this, '{{ guest.full_name }}', '{{ guest.guest_id }}')">
+      <img class="message-thread-avatar" src="https://ui-avatars.com/api/?name={{ guest.first_name }}+{{ guest.last_name }}&background=c8d89a&color=5a7a00&size=40" alt="{{ guest.full_name }}" />
+      <div class="message-thread-info">
+        <div class="message-thread-name">
+          {{ guest.full_name }}
+          <span class="message-thread-time">
+            {% if forloop.counter == 1 %}2m ago{% elif forloop.counter == 2 %}15m ago{% elif forloop.counter == 3 %}1h ago{% else %}{{ forloop.counter }}h ago{% endif %}
+          </span>
+        </div>
+        <div class="message-thread-preview">
+          {% if forloop.counter == 1 %}Could you arrange early check-in for my arrival?
+          {% elif forloop.counter == 2 %}Thank you for the wonderful service!
+          {% elif forloop.counter == 3 %}Is the pool open for night swimming?
+          {% elif forloop.counter == 4 %}Need extra towels in room please.
+          {% elif forloop.counter == 5 %}Can I extend my stay by 2 more nights?
+          {% elif forloop.counter == 6 %}What time is breakfast served?
+          {% elif forloop.counter == 7 %}Please arrange airport pickup.
+          {% else %}Looking forward to my stay!
+          {% endif %}
+        </div>
+      </div>
+      {% if forloop.counter <= 4 %}
+      <div class="message-thread-unread"></div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Chat content -->
+  <div class="messages-content" id="messages-content">
+    <div class="messages-content-header" id="chat-header">
+      {% if guests %}
+      <img class="message-thread-avatar" src="https://ui-avatars.com/api/?name={{ guests.0.first_name }}+{{ guests.0.last_name }}&background=c8d89a&color=5a7a00&size=40" alt="" />
+      <div>
+        <div style="font-weight:600;font-size:.88rem;" id="chat-name">{{ guests.0.full_name }}</div>
+        <div style="font-size:.72rem;color:var(--text-muted);" id="chat-id">{{ guests.0.guest_id }}</div>
+      </div>
+      {% endif %}
+    </div>
+    <div class="messages-content-body">
+      <div class="message-bubble received">
+        Namaste! I'll be arriving tomorrow. Could you please arrange early check-in around 11 AM? Also, could you have some fresh flowers in the room?
+      </div>
+      <div class="message-time">10:32 AM</div>
+
+      <div class="message-bubble sent">
+        Good morning! We'd be happy to arrange early check-in for you. Fresh flowers will be placed in your room before arrival. Is there anything else you'd like?
+      </div>
+      <div class="message-time sent-time">10:45 AM</div>
+
+      <div class="message-bubble received">
+        That's perfect, thank you! One more thing — could you recommend a good restaurant nearby for dinner?
+      </div>
+      <div class="message-time">10:48 AM</div>
+
+      <div class="message-bubble sent">
+        Absolutely! I'd recommend "Masala Library" — it's just 5 minutes from the hotel and serves excellent contemporary Indian cuisine. Shall I make a reservation for you?
+      </div>
+      <div class="message-time sent-time">10:52 AM</div>
+
+      <div class="message-bubble received">
+        Yes please, a table for 2 at 8 PM would be wonderful. Thank you so much! 🙏
+      </div>
+      <div class="message-time">10:55 AM</div>
+    </div>
+    <div class="messages-input-bar">
+      <input type="text" placeholder="Type a message…" />
+      <button class="messages-send-btn" title="Send">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+function selectThread(el, name, id) {
+  document.querySelectorAll('.message-thread').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('chat-name').textContent = name;
+  document.getElementById('chat-id').textContent = id;
+}
+</script>
+{% endblock %}

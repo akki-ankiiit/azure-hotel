@@ -1,0 +1,140 @@
+{% extends "hotel/base.html" %}
+
+{% block title %}Reservations – Azure Haven Hotel{% endblock %}
+
+{% block topnav %}
+<header class="topnav">
+  <div class="topnav-title-wrap">
+    <h1 class="topnav-title">Reservations</h1>
+    <div class="topnav-breadcrumb">
+      <a href="{% url 'dashboard' %}">Dashboard</a>
+      <span class="topnav-breadcrumb-sep">/</span>
+      <span style="color:var(--accent-hover);">Reservations</span>
+    </div>
+  </div>
+  <div class="topnav-user">
+    <div class="topnav-user-info">
+      <div class="topnav-user-name">Gajal Chandrakar</div>
+      <div class="topnav-user-role">General Manager</div>
+    </div>
+    <img class="topnav-avatar" src="https://ui-avatars.com/api/?name=Gajal+Chandrakar&background=a8c740&color=fff" alt="Admin" />
+    <button class="topnav-icon-btn topnav-notif" title="Notifications">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <span class="notif-dot"></span>
+    </button>
+  </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2 class="page-heading">All Reservations</h2>
+    <p class="page-subheading">View and manage all guest bookings.</p>
+  </div>
+</div>
+
+<!-- Status filter tabs -->
+<div class="room-filter-tabs" style="margin-bottom:20px;">
+  <a href="{% url 'reservations' %}" class="room-filter-tab {% if status_filter == 'All' %}active{% endif %}">All <span class="filter-count">{{ counts.All }}</span></a>
+  <a href="{% url 'reservations' %}?status=Confirmed" class="room-filter-tab {% if status_filter == 'Confirmed' %}active{% endif %}">Confirmed <span class="filter-count">{{ counts.Confirmed }}</span></a>
+  <a href="{% url 'reservations' %}?status=Checked-In" class="room-filter-tab {% if status_filter == 'Checked-In' %}active{% endif %}">Checked-In <span class="filter-count">{{ counts.Checked_In }}</span></a>
+  <a href="{% url 'reservations' %}?status=Pending" class="room-filter-tab {% if status_filter == 'Pending' %}active{% endif %}">Pending <span class="filter-count">{{ counts.Pending }}</span></a>
+  <a href="{% url 'reservations' %}?status=Checked-Out" class="room-filter-tab {% if status_filter == 'Checked-Out' %}active{% endif %}">Checked-Out <span class="filter-count">{{ counts.Checked_Out }}</span></a>
+  <a href="{% url 'reservations' %}?status=Cancelled" class="room-filter-tab {% if status_filter == 'Cancelled' %}active{% endif %}">Cancelled <span class="filter-count">{{ counts.Cancelled }}</span></a>
+</div>
+
+<div class="history-section">
+  <div class="history-header">
+    <h2 class="history-title">
+      {% if status_filter != 'All' %}{{ status_filter }} {% endif %}Bookings
+    </h2>
+    <div class="history-controls">
+      <div class="search-input">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="res-search" placeholder="Search booking ID, guest name…" />
+      </div>
+    </div>
+  </div>
+
+  <table class="history-table" id="res-table">
+    <thead>
+      <tr>
+        <th>Room</th>
+        <th>Booking ID</th>
+        <th>Guest</th>
+        <th>Room Type</th>
+        <th>Check-In</th>
+        <th>Check-Out</th>
+        <th>Nights</th>
+        <th>Status</th>
+        <th>Total</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for booking in bookings %}
+      <tr>
+        <td>
+          {% if booking.room and booking.room.image %}
+            <img class="table-room-image" src="{{ booking.room.image.url }}" alt="Room" />
+          {% elif booking.room.room_type == 'Standard' %}
+            <img class="table-room-image" src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=200&q=70" alt="Standard" />
+          {% elif booking.room.room_type == 'Deluxe' %}
+            <img class="table-room-image" src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=200&q=70" alt="Deluxe" />
+          {% elif booking.room.room_type == 'Suite' %}
+            <img class="table-room-image" src="https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=200&q=70" alt="Suite" />
+          {% elif booking.room.room_type == 'Presidential' %}
+            <img class="table-room-image" src="https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=200&q=70" alt="Presidential" />
+          {% else %}
+            <img class="table-room-image" src="https://images.unsplash.com/photo-1444201983204-c43cbd584d93?w=200&q=70" alt="Room" />
+          {% endif %}
+        </td>
+        <td class="font-medium">{{ booking.booking_id }}</td>
+        <td>
+          <a href="{% url 'guest_profile' booking.guest.pk %}" style="color:var(--accent-hover);font-weight:500;">
+            {{ booking.guest.full_name }}
+          </a>
+        </td>
+        <td>
+          {% if booking.room %}
+            <span class="room-type-tag {{ booking.room.room_type|lower }}">{{ booking.room.room_type }}</span>
+          {% else %}—{% endif %}
+        </td>
+        <td>
+          <div class="table-date">{{ booking.check_in|date:"M d, Y" }}</div>
+          <div class="table-date-time">{{ booking.check_in|date:"g:i A" }}</div>
+        </td>
+        <td>
+          <div class="table-date">{{ booking.check_out|date:"M d, Y" }}</div>
+          <div class="table-date-time">{{ booking.check_out|date:"g:i A" }}</div>
+        </td>
+        <td>{{ booking.num_nights }}</td>
+        <td>
+          <span class="booking-status-badge {% if booking.status == 'Confirmed' %}confirmed{% elif booking.status == 'Pending' %}pending{% elif booking.status == 'Cancelled' %}cancelled{% else %}checkedin{% endif %}">
+            <span class="dot"></span>{{ booking.status }}
+          </span>
+        </td>
+        <td class="font-semibold">₹{{ booking.total_price|floatformat:0 }}</td>
+        <td>
+          <a href="{% url 'guest_profile' booking.guest.pk %}" class="table-more-btn" title="View details">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="10" style="text-align:center;padding:48px;color:var(--text-muted);">No bookings found for this filter.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<script>
+document.getElementById('res-search').addEventListener('input', function() {
+  const q = this.value.toLowerCase();
+  document.querySelectorAll('#res-table tbody tr').forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+});
+</script>
+{% endblock %}

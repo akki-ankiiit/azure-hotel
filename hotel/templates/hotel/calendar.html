@@ -1,0 +1,168 @@
+{% extends "hotel/base.html" %}
+
+{% block title %}Calendar – Azure Haven Hotel{% endblock %}
+
+{% block topnav %}
+<header class="topnav">
+  <div class="topnav-title-wrap">
+    <h1 class="topnav-title">Booking Calendar</h1>
+    <div class="topnav-breadcrumb">
+      <a href="{% url 'dashboard' %}">Dashboard</a>
+      <span class="topnav-breadcrumb-sep">/</span>
+      <span style="color:var(--accent-hover);">Calendar</span>
+    </div>
+  </div>
+  <div class="topnav-user">
+    <div class="topnav-user-info">
+      <div class="topnav-user-name">Gajal Chandrakar</div>
+      <div class="topnav-user-role">General Manager</div>
+    </div>
+    <img class="topnav-avatar" src="https://ui-avatars.com/api/?name=Gajal+Chandrakar&background=a8c740&color=fff" alt="Admin" />
+  </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2 class="page-heading">Booking Calendar</h2>
+    <p class="page-subheading">Visual overview of upcoming reservations and availability.</p>
+  </div>
+</div>
+
+<div class="calendar-wrap">
+  <div class="calendar-header">
+    <button class="btn btn-outline" style="padding:6px 14px;" onclick="changeMonth(-1)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <span class="calendar-title" id="cal-month-title">July 2025</span>
+    <button class="btn btn-outline" style="padding:6px 14px;" onclick="changeMonth(1)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </div>
+  <div class="calendar-grid" id="cal-grid">
+    <!-- Day headers -->
+    <div class="calendar-day-header">Sun</div>
+    <div class="calendar-day-header">Mon</div>
+    <div class="calendar-day-header">Tue</div>
+    <div class="calendar-day-header">Wed</div>
+    <div class="calendar-day-header">Thu</div>
+    <div class="calendar-day-header">Fri</div>
+    <div class="calendar-day-header">Sat</div>
+  </div>
+</div>
+
+<!-- Booking list below calendar -->
+<div class="history-section" style="margin-top:24px;">
+  <div class="history-header">
+    <h2 class="history-title">Upcoming Bookings</h2>
+  </div>
+  <table class="history-table">
+    <thead>
+      <tr>
+        <th>Guest</th>
+        <th>Room</th>
+        <th>Check-In</th>
+        <th>Check-Out</th>
+        <th>Nights</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for booking in bookings %}
+      <tr>
+        <td>
+          <a href="{% url 'guest_profile' booking.guest.pk %}" style="color:var(--accent-hover);font-weight:500;">{{ booking.guest.full_name }}</a>
+        </td>
+        <td>{% if booking.room %}Room {{ booking.room.room_number }} ({{ booking.room.room_type }}){% else %}—{% endif %}</td>
+        <td class="table-date">{{ booking.check_in|date:"M d, Y" }}</td>
+        <td class="table-date">{{ booking.check_out|date:"M d, Y" }}</td>
+        <td>{{ booking.num_nights }}</td>
+        <td>
+          <span class="booking-status-badge {% if booking.status == 'Confirmed' %}confirmed{% elif booking.status == 'Pending' %}pending{% elif booking.status == 'Cancelled' %}cancelled{% else %}checkedin{% endif %}">
+            <span class="dot"></span>{{ booking.status }}
+          </span>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">No bookings scheduled.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<script>
+// Simple JS calendar renderer
+const bookings = [
+  {% for b in bookings %}
+  { guest: "{{ b.guest.full_name }}", checkIn: "{{ b.check_in|date:'Y-m-d' }}", checkOut: "{{ b.check_out|date:'Y-m-d' }}", status: "{{ b.status }}" },
+  {% endfor %}
+];
+
+let currentMonth = 6; // July (0-indexed)
+let currentYear = 2025;
+
+function renderCalendar() {
+  const grid = document.getElementById('cal-grid');
+  // Remove old day cells
+  grid.querySelectorAll('.calendar-day').forEach(d => d.remove());
+
+  const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  document.getElementById('cal-month-title').textContent = monthNames[currentMonth] + ' ' + currentYear;
+
+  const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const daysInPrev = new Date(currentYear, currentMonth, 0).getDate();
+  const today = new Date();
+
+  // Previous month padding
+  for (let i = firstDay - 1; i >= 0; i--) {
+    const cell = document.createElement('div');
+    cell.className = 'calendar-day other-month';
+    cell.innerHTML = '<div class="calendar-day-number">' + (daysInPrev - i) + '</div>';
+    grid.appendChild(cell);
+  }
+
+  // Current month days
+  for (let d = 1; d <= daysInMonth; d++) {
+    const cell = document.createElement('div');
+    const dateStr = currentYear + '-' + String(currentMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+    const isToday = today.getFullYear() === currentYear && today.getMonth() === currentMonth && today.getDate() === d;
+    cell.className = 'calendar-day' + (isToday ? ' today' : '');
+    let html = '<div class="calendar-day-number">' + d + '</div>';
+
+    bookings.forEach(b => {
+      if (dateStr >= b.checkIn && dateStr <= b.checkOut) {
+        const cls = b.status === 'Confirmed' ? 'confirmed' : b.status === 'Pending' ? 'pending' : b.status === 'Checked-In' ? 'checkedin' : 'checkout';
+        if (dateStr === b.checkIn) {
+          html += '<div class="calendar-event ' + cls + '">↓ ' + b.guest.split(' ')[0] + '</div>';
+        } else if (dateStr === b.checkOut) {
+          html += '<div class="calendar-event checkout">↑ ' + b.guest.split(' ')[0] + '</div>';
+        }
+      }
+    });
+    cell.innerHTML = html;
+    grid.appendChild(cell);
+  }
+
+  // Next month padding
+  const totalCells = firstDay + daysInMonth;
+  const remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+  for (let i = 1; i <= remaining; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'calendar-day other-month';
+    cell.innerHTML = '<div class="calendar-day-number">' + i + '</div>';
+    grid.appendChild(cell);
+  }
+}
+
+function changeMonth(delta) {
+  currentMonth += delta;
+  if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+  if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+  renderCalendar();
+}
+
+renderCalendar();
+</script>
+{% endblock %}

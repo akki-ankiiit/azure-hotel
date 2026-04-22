@@ -1,0 +1,120 @@
+{% extends "hotel/base.html" %}
+
+{% block title %}Reviews – Azure Haven Hotel{% endblock %}
+
+{% block topnav %}
+<header class="topnav">
+  <div class="topnav-title-wrap">
+    <h1 class="topnav-title">Guest Reviews</h1>
+    <div class="topnav-breadcrumb">
+      <a href="{% url 'dashboard' %}">Dashboard</a>
+      <span class="topnav-breadcrumb-sep">/</span>
+      <span style="color:var(--accent-hover);">Reviews</span>
+    </div>
+  </div>
+  <div class="topnav-user">
+    <div class="topnav-user-info">
+      <div class="topnav-user-name">Gajal Chandrakar</div>
+      <div class="topnav-user-role">General Manager</div>
+    </div>
+    <img class="topnav-avatar" src="https://ui-avatars.com/api/?name=Gajal+Chandrakar&background=a8c740&color=fff" alt="Admin" />
+  </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2 class="page-heading">Guest Reviews & Ratings</h2>
+    <p class="page-subheading">Monitor guest satisfaction and review feedback.</p>
+  </div>
+</div>
+
+<!-- Summary Stats -->
+<div class="review-summary-stats">
+  <div class="stat-card">
+    <div class="stat-icon-wrap" style="background:#fef3c7;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+    </div>
+    <div class="stat-label">Average Rating</div>
+    <div class="stat-value">4.6</div>
+    <div class="stat-sub">Out of 5.0</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon-wrap" style="background:#eef4d8;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8fac2e" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    </div>
+    <div class="stat-label">Total Reviews</div>
+    <div class="stat-value stat-accent">{{ guests|length }}</div>
+    <div class="stat-sub">From verified guests</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon-wrap" style="background:#dcfce7;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+    </div>
+    <div class="stat-label">Positive</div>
+    <div class="stat-value">92%</div>
+    <div class="stat-sub">4+ star reviews</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon-wrap" style="background:#dbeafe;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+    </div>
+    <div class="stat-label">Trending</div>
+    <div class="stat-value">↑ 8%</div>
+    <div class="stat-sub">vs. last month</div>
+  </div>
+</div>
+
+<!-- Reviews Grid -->
+<div class="reviews-grid">
+  {% for guest in guests %}
+  <div class="review-card">
+    <div class="review-header">
+      <img class="review-avatar" src="https://ui-avatars.com/api/?name={{ guest.first_name }}+{{ guest.last_name }}&background=c8d89a&color=5a7a00&size=42" alt="{{ guest.full_name }}" />
+      <div>
+        <div class="review-name">{{ guest.full_name }}</div>
+        <div class="review-date">
+          {% if forloop.counter == 1 %}2 days ago{% elif forloop.counter == 2 %}5 days ago{% elif forloop.counter == 3 %}1 week ago{% elif forloop.counter == 4 %}2 weeks ago{% elif forloop.counter == 5 %}3 weeks ago{% elif forloop.counter == 6 %}1 month ago{% else %}{{ forloop.counter }} weeks ago{% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="review-stars">
+      {% if forloop.counter == 1 or forloop.counter == 5 or forloop.counter == 7 %}
+        <svg viewBox="0 0 24 24" class="filled" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <svg viewBox="0 0 24 24" class="filled" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <svg viewBox="0 0 24 24" class="filled" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <svg viewBox="0 0 24 24" class="filled" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <svg viewBox="0 0 24 24" class="filled" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      {% elif forloop.counter == 4 %}
+        <svg viewBox="0 0 24 24" class="filled" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <svg viewBox="0 0 24 24" class="filled" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <svg viewBox="0 0 24 24" class="filled" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <svg viewBox="0 0 24 24" class="filled" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <svg viewBox="0 0 24 24" class="empty" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      {% else %}
+        <svg viewBox="0 0 24 24" class="filled" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <svg viewBox="0 0 24 24" class="filled" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <svg viewBox="0 0 24 24" class="filled" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <svg viewBox="0 0 24 24" class="filled" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <svg viewBox="0 0 24 24" class="filled" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      {% endif %}
+    </div>
+    <div class="review-text">
+      {% if forloop.counter == 1 %}Absolutely wonderful stay! The room was spotless, the staff were incredibly warm and attentive. The breakfast spread was divine — the dosa station was my favourite. Will definitely return!
+      {% elif forloop.counter == 2 %}The Suite was magnificent with a beautiful view of the city. The concierge arranged a perfect dinner for our anniversary. Room service was prompt and the food quality was exceptional.
+      {% elif forloop.counter == 3 %}Good hotel with nice amenities. The gym was well-equipped. Only suggestion would be to improve the check-in speed during peak hours. Otherwise, a very pleasant experience.
+      {% elif forloop.counter == 4 %}Decent stay. The room was comfortable but the Wi-Fi was a bit slow. The pool area is lovely though, and the staff makes up for everything with their hospitality.
+      {% elif forloop.counter == 5 %}Presidential suite was beyond expectations! Private pool, butler service, everything was top-notch. Best hotel experience in Mumbai. The attention to detail is remarkable.
+      {% elif forloop.counter == 6 %}Loved the Deluxe room — spacious, clean, and modern. The chai served at check-in was a lovely touch. The location is perfect for business travellers.
+      {% elif forloop.counter == 7 %}Fantastic hotel for a family vacation. Kids loved the pool, and the restaurant had great options for everyone. The mountain view suite was breathtaking.
+      {% else %}A truly premium experience. The staff remembered our preferences from the last visit. This is what hospitality should be like!
+      {% endif %}
+    </div>
+    <span class="review-room-tag">
+      {% if forloop.counter == 1 %}Deluxe Room{% elif forloop.counter == 2 %}Suite{% elif forloop.counter == 3 %}Standard{% elif forloop.counter == 4 %}Standard{% elif forloop.counter == 5 %}Presidential Suite{% elif forloop.counter == 6 %}Deluxe Room{% elif forloop.counter == 7 %}Suite{% else %}Deluxe Room{% endif %}
+    </span>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

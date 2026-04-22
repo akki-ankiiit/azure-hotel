@@ -1,0 +1,120 @@
+{% extends "hotel/base.html" %}
+
+{% block title %}Inventory – Azure Haven Hotel{% endblock %}
+
+{% block topnav %}
+<header class="topnav">
+  <div class="topnav-title-wrap">
+    <h1 class="topnav-title">Inventory</h1>
+    <div class="topnav-breadcrumb">
+      <a href="{% url 'dashboard' %}">Dashboard</a>
+      <span class="topnav-breadcrumb-sep">/</span>
+      <span style="color:var(--accent-hover);">Inventory</span>
+    </div>
+  </div>
+  <div class="topnav-user">
+    <div class="topnav-user-info">
+      <div class="topnav-user-name">Gajal Chandrakar</div>
+      <div class="topnav-user-role">General Manager</div>
+    </div>
+    <img class="topnav-avatar" src="https://ui-avatars.com/api/?name=Gajal+Chandrakar&background=a8c740&color=fff" alt="Admin" />
+  </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2 class="page-heading">Inventory Management</h2>
+    <p class="page-subheading">Track hotel supplies, amenities, and equipment stock.</p>
+  </div>
+</div>
+
+<!-- Summary -->
+<div class="dashboard-stats" style="grid-template-columns:repeat(4,1fr);margin-bottom:24px;">
+  <div class="stat-card">
+    <div class="stat-icon-wrap" style="background:#eef4d8;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8fac2e" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+    </div>
+    <div class="stat-label">Total Items</div>
+    <div class="stat-value">24</div>
+    <div class="stat-sub">Tracked categories</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon-wrap" style="background:#dcfce7;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div class="stat-label">In Stock</div>
+    <div class="stat-value stat-accent">18</div>
+    <div class="stat-sub">Adequate supply</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon-wrap" style="background:#fef3c7;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    </div>
+    <div class="stat-label">Low Stock</div>
+    <div class="stat-value">4</div>
+    <div class="stat-sub">Reorder soon</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon-wrap" style="background:#fee2e2;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+    </div>
+    <div class="stat-label">Out of Stock</div>
+    <div class="stat-value">2</div>
+    <div class="stat-sub">Needs immediate order</div>
+  </div>
+</div>
+
+<div class="inventory-table-wrap">
+  <div class="history-header">
+    <h2 class="history-title">Supply Inventory</h2>
+    <div class="history-controls">
+      <div class="search-input">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="inv-search" placeholder="Search items…" />
+      </div>
+    </div>
+  </div>
+  <table class="history-table" id="inv-table">
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>Category</th>
+        <th>Quantity</th>
+        <th>Unit</th>
+        <th>Last Restocked</th>
+        <th>Status</th>
+        <th>Cost (₹)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="font-medium">Bath Towels</td><td>Linen</td><td>245</td><td>Pieces</td><td>Apr 10, 2025</td><td><span class="stock-badge in-stock">In Stock</span></td><td>₹350/pc</td></tr>
+      <tr><td class="font-medium">Hand Towels</td><td>Linen</td><td>180</td><td>Pieces</td><td>Apr 10, 2025</td><td><span class="stock-badge in-stock">In Stock</span></td><td>₹150/pc</td></tr>
+      <tr><td class="font-medium">Bed Sheets (King)</td><td>Linen</td><td>120</td><td>Sets</td><td>Apr 08, 2025</td><td><span class="stock-badge in-stock">In Stock</span></td><td>₹2,800/set</td></tr>
+      <tr><td class="font-medium">Pillow Covers</td><td>Linen</td><td>30</td><td>Pieces</td><td>Mar 28, 2025</td><td><span class="stock-badge low-stock">Low Stock</span></td><td>₹200/pc</td></tr>
+      <tr><td class="font-medium">Shampoo Sachets</td><td>Toiletries</td><td>500</td><td>Sachets</td><td>Apr 12, 2025</td><td><span class="stock-badge in-stock">In Stock</span></td><td>₹15/pc</td></tr>
+      <tr><td class="font-medium">Body Wash</td><td>Toiletries</td><td>420</td><td>Bottles</td><td>Apr 12, 2025</td><td><span class="stock-badge in-stock">In Stock</span></td><td>₹25/pc</td></tr>
+      <tr><td class="font-medium">Dental Kits</td><td>Toiletries</td><td>18</td><td>Kits</td><td>Mar 20, 2025</td><td><span class="stock-badge low-stock">Low Stock</span></td><td>₹50/kit</td></tr>
+      <tr><td class="font-medium">Slippers</td><td>Amenities</td><td>0</td><td>Pairs</td><td>Mar 15, 2025</td><td><span class="stock-badge out-of-stock">Out of Stock</span></td><td>₹120/pair</td></tr>
+      <tr><td class="font-medium">Minibar Water</td><td>F&B</td><td>350</td><td>Bottles</td><td>Apr 14, 2025</td><td><span class="stock-badge in-stock">In Stock</span></td><td>₹20/bottle</td></tr>
+      <tr><td class="font-medium">Tea/Coffee Sachets</td><td>F&B</td><td>600</td><td>Sachets</td><td>Apr 11, 2025</td><td><span class="stock-badge in-stock">In Stock</span></td><td>₹8/pc</td></tr>
+      <tr><td class="font-medium">Room Freshener</td><td>Amenities</td><td>15</td><td>Cans</td><td>Mar 25, 2025</td><td><span class="stock-badge low-stock">Low Stock</span></td><td>₹350/can</td></tr>
+      <tr><td class="font-medium">Laundry Bags</td><td>Amenities</td><td>0</td><td>Pieces</td><td>Feb 28, 2025</td><td><span class="stock-badge out-of-stock">Out of Stock</span></td><td>₹45/pc</td></tr>
+      <tr><td class="font-medium">Tissue Boxes</td><td>Amenities</td><td>200</td><td>Boxes</td><td>Apr 05, 2025</td><td><span class="stock-badge in-stock">In Stock</span></td><td>₹60/box</td></tr>
+      <tr><td class="font-medium">Iron & Board</td><td>Equipment</td><td>12</td><td>Units</td><td>Jan 15, 2025</td><td><span class="stock-badge in-stock">In Stock</span></td><td>₹3,500/unit</td></tr>
+      <tr><td class="font-medium">Hair Dryer</td><td>Equipment</td><td>10</td><td>Units</td><td>Jan 15, 2025</td><td><span class="stock-badge in-stock">In Stock</span></td><td>₹2,200/unit</td></tr>
+      <tr><td class="font-medium">Hangers (Wooden)</td><td>Amenities</td><td>25</td><td>Sets</td><td>Mar 18, 2025</td><td><span class="stock-badge low-stock">Low Stock</span></td><td>₹180/set</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+document.getElementById('inv-search').addEventListener('input', function() {
+  const q = this.value.toLowerCase();
+  document.querySelectorAll('#inv-table tbody tr').forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+});
+</script>
+{% endblock %}
